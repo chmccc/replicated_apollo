@@ -1,58 +1,75 @@
 import React, { Component } from 'react';
-import QuestionPanel from './components/QuestionPanel';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
 
-const dummyQ = {
-  id: 'ArCCjSAArQ',
-  text: 'Product Assortment',
-  description:
-    'Maintaining different versions/packages of your product prevents small customers from being overwhelmed by features/options, while allowing enterprise customers to pay for the features they need.',
-  question: 'Which best describes your product assortment?',
-  choices: [
-    {
-      id: '1a',
-      text: 'No packages or plans; each customer has access to the exact same functionality.',
-      recommendation:
-        'Your next step is to create plans that allow pricing assortment through usage.',
-      isSelected: true,
-    },
-    {
-      id: '1b',
-      text: 'Plans are differentiated exclusively on the amount of usage, not by feature-gating.',
-      recommendation:
-        'Your next step is to provide 2 or more plans that that allow pricing assortment through feature-gating.',
-      isSelected: false,
-    },
-    {
-      id: '1c',
-      text:
-        'Two or more packages/options are defined by different features  (i.e., with and without enterprise features).',
-      recommendation:
-        'Your next step is to provide multiple plans that provide visibility into features that are not available (but could be with an upgrade), while keeping a less-complex experience for non-enterprise customers.',
-      isSelected: false,
-    },
-    {
-      id: '1d',
-      text:
-        'Additional premium features are exposed in the UI, to provide visibility into upgrade benefits and new features.',
-      recommendation:
-        'Perfect! Having different packages for different buying segments, specifically packages for enterprise customers, makes you one step closer to being EnterpriseReady!',
-      isSelected: false,
-    },
-  ],
-};
+const StyledApp = styled.div`
+  width: 100%;
+  margin: 0;
+`;
+
+const GET_ASSESSMENT_ID = gql`
+  mutation prepareAssessment($templateId: String!) {
+    prepareAssessment(templateId: $templateId)
+  }
+`;
+
+const GET_ASSESSMENT = gql`
+  query getAssessment($id: String!) {
+    assessment(id: $id) {
+      id
+      isCompleted
+      questions {
+        id
+        text
+        description
+        question
+        choices {
+          id
+          text
+          recommendation
+          isSelected
+        }
+      }
+    }
+  }
+`;
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      assessmentId: null,
+    };
+  }
+
+  getAssessmentId = async () => {
+    const {
+      data: { prepareAssessment: assessmentId },
+    } = await this.props.client.mutate({
+      variables: { templateId: 'colin' },
+      mutation: GET_ASSESSMENT_ID,
+    });
+
+    this.setState({ assessmentId });
+  };
+
+  componentDidMount() {
+    this.getAssessmentId();
+  }
+
   render() {
-    return (
-      <QuestionPanel
-        nextQuestion={() => {}}
-        text={dummyQ.text}
-        description={dummyQ.description}
-        question={dummyQ.question}
-        id={dummyQ.id}
-        choices={dummyQ.choices}
-        selectChoice={() => {}}
-      />
+    return this.state.assessmentId ? (
+      <Query query={GET_ASSESSMENT} variables={{ id: this.state.assessmentId }}>
+        {({ loading, error, data: { assessment } }) => {
+          if (loading) return null;
+          const { questions } = assessment;
+          console.log('got questions? ', questions);
+          return <StyledApp />;
+        }}
+      </Query>
+    ) : (
+      <div className="loading">Loading, please wait...</div>
     );
   }
 }
