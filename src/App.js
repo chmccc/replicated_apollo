@@ -2,10 +2,16 @@ import React, { Component } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
+import Quiz from './containers/Quiz';
+import Results from './containers/Results';
 
 const StyledApp = styled.div`
   width: 100%;
   margin: 0;
+  #loading {
+    width: 100%;
+    text-align: center;
+  }
 `;
 
 const GET_ASSESSMENT_ID = gql`
@@ -40,7 +46,12 @@ class App extends Component {
     super(props);
     this.state = {
       assessmentId: null,
+      quizComplete: false,
     };
+  }
+
+  componentDidMount() {
+    this.getAssessmentId();
   }
 
   getAssessmentId = async () => {
@@ -54,22 +65,34 @@ class App extends Component {
     this.setState({ assessmentId });
   };
 
-  componentDidMount() {
-    this.getAssessmentId();
-  }
+  moveToResults = () => {
+    this.setState({ quizComplete: true });
+  };
 
   render() {
     return this.state.assessmentId ? (
       <Query query={GET_ASSESSMENT} variables={{ id: this.state.assessmentId }}>
         {({ loading, error, data: { assessment } }) => {
+          console.log('called rerender on query render prop');
           if (loading) return null;
           const { questions } = assessment;
-          console.log('got questions? ', questions);
-          return <StyledApp />;
+          return (
+            <StyledApp>
+              {this.state.quizComplete ? (
+                <Results questions={questions} />
+              ) : (
+                <Quiz
+                  questions={questions}
+                  assessmentId={this.state.assessmentId}
+                  moveToResults={this.moveToResults}
+                />
+              )}
+            </StyledApp>
+          );
         }}
       </Query>
     ) : (
-      <div className="loading">Loading, please wait...</div>
+      <div id="loading">Loading, please wait...</div>
     );
   }
 }
