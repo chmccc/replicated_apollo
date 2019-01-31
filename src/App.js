@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Choice from './components/Choice';
+import QuestionPanel from './components/QuestionPanel';
 
 const dummyQ = {
   id: 'ArCCjSAArQ',
@@ -44,11 +44,14 @@ const dummyQ = {
 class App extends Component {
   render() {
     return (
-      <Choice
-        isSelected={false}
-        text={dummyQ.choices[0].text}
-        select={() => {}}
-        id={dummyQ.choices[0].id}
+      <QuestionPanel
+        nextQuestion={() => {}}
+        text={dummyQ.text}
+        description={dummyQ.description}
+        question={dummyQ.question}
+        id={dummyQ.id}
+        choices={dummyQ.choices}
+        selectChoice={() => {}}
       />
     );
   }
