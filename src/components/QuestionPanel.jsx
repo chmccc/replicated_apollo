@@ -54,10 +54,6 @@ export default ({ text, description, question, choices, nextQuestion, selectChoi
       </div>
       <button
         onClick={e => {
-          // make sure they've chosen something
-          if (choices.filter(choice => choice.isSelected).length !== 1) {
-            return window.alert('Please make a selection before proceeding.');
-          }
           return nextQuestion();
         }}>
         Next >

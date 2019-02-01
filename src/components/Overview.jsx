@@ -6,9 +6,10 @@ import D3Graph from './D3Graph';
 const StyledOverview = styled.div`
   display: flex;
   justify-content: space-evenly;
-  height: 300px;
+  height: 350px;
+  padding: 20px;
   #main-grade {
-    width: 45%;
+    width: 50%;
     #main-grade-header {
       display: flex;
       align-items: center;
