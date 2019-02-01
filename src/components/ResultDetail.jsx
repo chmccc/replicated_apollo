@@ -40,8 +40,12 @@ class ResultDetail extends React.Component {
   render() {
     const { question, scoreObj } = this.props;
     const selectedChoices = question.choices.filter(choice => choice.isSelected);
-    if (!selectedChoices.length) return null;
-
+    const text = selectedChoices.length
+      ? selectedChoices[0].text
+      : 'You did not select an answer for this section of the quiz.';
+    const recommendation = selectedChoices.length
+      ? selectedChoices[0].recommendation
+      : 'Follow the link below to learn more about how EnterpriseGrade can help you improve your score!';
     return (
       <StyledResultDetail>
         <img src={images[question.text]} alt={question.text} />
@@ -53,8 +57,8 @@ class ResultDetail extends React.Component {
             </CircleGrade>
           </div>
           <p className="soft">Your Answer:</p>
-          <p className="soft">{selectedChoices[0].text}</p>
-          <p className="bold">{selectedChoices[0].recommendation}</p>
+          <p className="soft">{text}</p>
+          <p className="bold">{recommendation}</p>
           <a href="http://www.replicated.com">Learn More ></a>
         </div>
       </StyledResultDetail>

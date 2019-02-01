@@ -73,7 +73,6 @@ class App extends Component {
     return this.state.assessmentId ? (
       <Query query={GET_ASSESSMENT} variables={{ id: this.state.assessmentId }}>
         {({ loading, error, data: { assessment } }) => {
-          console.log('called rerender on query render prop');
           if (loading) return null;
           const { questions } = assessment;
           return (

@@ -7,6 +7,11 @@ import QuestionPanel from '../components/QuestionPanel.jsx';
 const StyledQuiz = styled.div`
   margin-top: 20px;
   width: 100%;
+  #progress-bar {
+    text-align: center;
+    color: red;
+    margin-bottom: 30px;
+  }
 `;
 
 const UPDATE_ASSESSMENT = gql`
@@ -59,11 +64,11 @@ class Quiz extends Component {
   render() {
     const q = this.props.questions[this.state.activeQuestion];
     return (
-      <Mutation mutation={UPDATE_ASSESSMENT} onCompleted={() => console.log('mutation completed')}>
+      <Mutation mutation={UPDATE_ASSESSMENT}>
         {(updateAssessment, { loading, error }) => {
           return (
             <StyledQuiz>
-              <div>
+              <div id="progress-bar">
                 <span>placeholder for progress bar</span>
                 <hr />
               </div>
